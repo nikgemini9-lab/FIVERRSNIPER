@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiverr Sniper 🎯</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- ── HEADER ───────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🎯</span>
+        <span class="logo-text">Fiverr<span class="logo-accent">Sniper</span></span>
+      </div>
+      <div class="header-badge">Analytics Engine v2</div>
+    </div>
+  </header>
+
+  <!-- ── HERO / SEARCH ─────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-content">
+      <div class="hero-tag">MARKET INTELLIGENCE TOOL</div>
+      <h1 class="hero-title">
+        Find <span class="green">High-Demand</span> Gigs<br/>
+        Before Everyone Else Does
+      </h1>
+      <p class="hero-sub">
+        Enter any keyword to get competition level, orders-in-queue data, and
+        your Sniper Score — the opportunity rating for that niche.
+      </p>
+
+      <div class="search-box">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input
+              id="keyword"
+              type="text"
+              placeholder='Try "akashic record reading" or "AI voice clone"'
+              autocomplete="off"
+            />
+          </div>
+          <button id="snipeBtn" class="snipe-btn" onclick="startSnipe()">
+            <span class="btn-icon">🎯</span>
+            SNIPE IT
+          </button>
+        </div>
+
+        <div class="search-options">
+          <label class="opt-group">
+            <span>Min Price</span>
+            <select id="minPrice">
+              <option value="100">$100+</option>
+              <option value="200">$200+</option>
+              <option value="500">$500+</option>
+              <option value="1000">$1,000+</option>
+            </select>
+          </label>
+          <label class="opt-group">
+            <span>Pages</span>
+            <select id="pages">
+              <option value="2">2 pages</option>
+              <option value="3" selected>3 pages</option>
+              <option value="5">5 pages</option>
+            </select>
+          </label>
+          <label class="opt-group">
+            <span>Top results</span>
+            <select id="topN">
+              <option value="10">Top 10</option>
+              <option value="20" selected>Top 20</option>
+              <option value="30">Top 30</option>
+            </select>
+          </label>
+          <label class="opt-group opt-toggle">
+            <span>Detail scan</span>
+            <div class="toggle-wrap">
+              <input type="checkbox" id="detailScrape" checked />
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Example chips -->
+      <div class="example-chips">
+        <span class="chips-label">Try:</span>
+        <button class="chip" onclick="setKeyword('akashic record reading')">akashic record reading</button>
+        <button class="chip" onclick="setKeyword('AI avatar creator')">AI avatar creator</button>
+        <button class="chip" onclick="setKeyword('AI voice cloning')">AI voice cloning</button>
+        <button class="chip" onclick="setKeyword('prompt engineering')">prompt engineering</button>
+        <button class="chip" onclick="setKeyword('AI chatbot development')">AI chatbot development</button>
+        <button class="chip" onclick="setKeyword('tarot reading')">tarot reading</button>
+        <button class="chip" onclick="setKeyword('machine learning model')">machine learning model</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROGRESS LOG ──────────────────────────────────────── -->
+  <section id="progressSection" class="progress-section hidden">
+    <div class="progress-inner">
+      <div class="progress-header">
+        <div class="scope-anim">
+          <div class="scope-ring r1"></div>
+          <div class="scope-ring r2"></div>
+          <div class="scope-ring r3"></div>
+          <div class="scope-dot"></div>
+          <div class="scope-line h"></div>
+          <div class="scope-line v"></div>
+        </div>
+        <span id="progressTitle">Acquiring target…</span>
+      </div>
+      <div id="progressLog" class="progress-log"></div>
+    </div>
+  </section>
+
+  <!-- ── RESULTS ───────────────────────────────────────────── -->
+  <section id="resultsSection" class="results-section hidden">
+
+    <!-- KPI cards row -->
+    <div class="kpi-row">
+      <div class="kpi-card" id="kpiCompetition">
+        <div class="kpi-icon">📊</div>
+        <div class="kpi-label">Competition</div>
+        <div class="kpi-value" id="kpiCompVal">—</div>
+        <div class="kpi-sub" id="kpiCompCount">—</div>
+        <div class="kpi-badge" id="kpiCompBadge">—</div>
+      </div>
+
+      <div class="kpi-card sniper-card" id="kpiScore">
+        <div class="kpi-icon">🎯</div>
+        <div class="kpi-label">Sniper Score</div>
+        <div class="kpi-value" id="kpiScoreVal">—</div>
+        <div class="kpi-sub" id="kpiScoreLabel">—</div>
+        <div class="score-gauge-wrap">
+          <svg class="score-gauge" viewBox="0 0 120 70">
+            <path d="M10,60 A50,50 0 0,1 110,60" fill="none" stroke="#2d2d2d" stroke-width="10" stroke-linecap="round"/>
+            <path id="gaugeFill" d="M10,60 A50,50 0 0,1 110,60" fill="none" stroke="#1DBF73" stroke-width="10" stroke-linecap="round"
+                  stroke-dasharray="0 157" style="transition:stroke-dasharray 1.2s ease"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">🔥</div>
+        <div class="kpi-label">Total Queue Demand</div>
+        <div class="kpi-value" id="kpiQueue">—</div>
+        <div class="kpi-sub" id="kpiAvgQueue">avg — orders / top seller</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-label">Top Seller Queue</div>
+        <div class="kpi-value" id="kpiTopQueue">—</div>
+        <div class="kpi-sub" id="kpiTopSeller">—</div>
+      </div>
+    </div>
+
+    <!-- Opportunity verdict banner -->
+    <div id="verdictBanner" class="verdict-banner hidden">
+      <div class="verdict-icon" id="verdictIcon">🎯</div>
+      <div class="verdict-text">
+        <div class="verdict-label" id="verdictLabel">—</div>
+        <div class="verdict-detail" id="verdictDetail">—</div>
+      </div>
+    </div>
+
+    <!-- Gig results table -->
+    <div class="results-wrap">
+      <div class="results-header-row">
+        <h2 class="results-title">🏆 Top Sellers by Orders in Queue</h2>
+        <div class="results-keyword" id="resultsKeyword"></div>
+      </div>
+      <div id="gigCards" class="gig-cards"></div>
+    </div>
+
+  </section>
+
+  <!-- ── FOOTER ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <p>Fiverr Sniper — Market intelligence tool. For research purposes only.</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

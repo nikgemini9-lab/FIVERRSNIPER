@@ -12,10 +12,25 @@ import time
 from dataclasses import dataclass, field
 from typing import Optional
 
+import os
+
 import requests
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
+
+# Set SCRAPERAPI_KEY env var to route all requests through ScraperAPI.
+# Avoids datacenter IP blocks when running on cloud hosts (Render, Railway…).
+# Free tier: 1,000 req/month — https://www.scraperapi.com
+_SCRAPERAPI_KEY = os.getenv("SCRAPERAPI_KEY", "").strip()
+
+
+def _scraper_url(url: str) -> str:
+    """Wrap a URL with ScraperAPI proxy if key is configured."""
+    if _SCRAPERAPI_KEY:
+        encoded = requests.utils.quote(url, safe="")
+        return f"http://api.scraperapi.com/?api_key={_SCRAPERAPI_KEY}&url={encoded}&render=false"
+    return url
 
 # ---------------------------------------------------------------------------
 # Data models
@@ -116,7 +131,7 @@ def _session() -> requests.Session:
 def _fetch(session: requests.Session, url: str, retries: int = 4) -> Optional[BeautifulSoup]:
     for attempt in range(1, retries + 1):
         try:
-            r = session.get(url, timeout=25)
+            r = session.get(_scraper_url(url), timeout=60)
             if r.status_code == 200:
                 return BeautifulSoup(r.text, "lxml")
             if r.status_code == 429:
